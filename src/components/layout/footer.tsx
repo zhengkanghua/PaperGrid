@@ -19,7 +19,19 @@ function parseMpsSetting(rawValue: string): { text: string; href: string } | nul
   return { text: normalized, href }
 }
 
-export function Footer({ settings }: { settings?: Record<string, unknown> }) {
+type FooterCategory = {
+  id: string
+  name: string
+  slug: string
+}
+
+export function Footer({
+  settings,
+  categories = [],
+}: {
+  settings?: Record<string, unknown>
+  categories?: FooterCategory[]
+}) {
   const pathname = usePathname()
   const s: Record<string, unknown> = settings || {}
   const getStr = (key: string, fallback = '') =>
@@ -41,6 +53,7 @@ export function Footer({ settings }: { settings?: Record<string, unknown> }) {
   const showX = getBool('profile.social.x.enabled', true) && Boolean(xUrl) && isValidHref(xUrl)
   const showBilibili = getBool('profile.social.bilibili.enabled', true) && Boolean(bilibiliUrl) && isValidHref(bilibiliUrl)
   const showEmail = getBool('profile.social.email.enabled', true) && Boolean(email) && isValidHref(`mailto:${email}`)
+  const visibleCategories = categories.slice(0, 3)
 
   if (pathname?.startsWith('/admin')) return null
 
@@ -113,30 +126,20 @@ export function Footer({ settings }: { settings?: Record<string, unknown> }) {
           <div>
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white">分类</h3>
             <ul className="mt-4 space-y-3">
-              <li>
-                <Link
-                  href="/categories/tech"
-                  className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                >
-                  技术分享
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/categories/life"
-                  className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                >
-                  生活记录
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/yaji"
-                  className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                >
-                  雅集
-                </Link>
-              </li>
+              {visibleCategories.length > 0 ? (
+                visibleCategories.map((category) => (
+                  <li key={category.id}>
+                    <Link
+                      href={`/categories/${category.slug}`}
+                      className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                    >
+                      {category.name}
+                    </Link>
+                  </li>
+                ))
+              ) : (
+                <li className="text-sm text-gray-500 dark:text-gray-400">暂无分类</li>
+              )}
             </ul>
           </div>
 

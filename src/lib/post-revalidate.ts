@@ -6,6 +6,7 @@ import {
   getCategoryRelatedCacheTag,
   getPostCacheTag,
 } from './public-post-page'
+import { PUBLIC_CATEGORIES_CACHE_TAG } from './public-categories'
 
 const PUBLIC_POST_LIST_PATHS = ['/', '/posts', '/archive', '/categories', '/tags'] as const
 
@@ -90,6 +91,7 @@ export function revalidatePublicTaxonomyPaths(input?: {
   tagSlugs?: Iterable<string>
 }) {
   revalidateAllPublicPostContent()
+  revalidateTag(PUBLIC_CATEGORIES_CACHE_TAG, 'max')
 
   for (const slug of input?.categorySlugs || []) {
     const normalizedSlug = normalizeSlug(slug)

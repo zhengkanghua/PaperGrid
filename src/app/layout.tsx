@@ -21,6 +21,7 @@ import {
 } from '@/lib/public-style-preset'
 import { getSiteUrl } from '@/lib/seo'
 import { CustomHeadScripts } from '@/components/layout/custom-head-scripts'
+import { getPublicCategories } from '@/lib/public-categories'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -88,10 +89,11 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const currentYear = String(new Date().getUTCFullYear())
-  const [defaultTheme, publicSettings, customHeadCodeRaw] = await Promise.all([
+  const [defaultTheme, publicSettings, customHeadCodeRaw, footerCategories] = await Promise.all([
     getSetting<string>('site.defaultTheme', 'system'),
     getPublicSettings(),
     getSetting<string>('site.customHeadCode', ''),
+    getPublicCategories(3),
   ])
   const customHeadCode = customHeadCodeRaw || ''
   const publicStylePresetRaw =
@@ -128,7 +130,7 @@ export default async function RootLayout({
               <main className="flex-1">
                 <PageTransition>{children}</PageTransition>
               </main>
-              <Footer settings={footerSettings} />
+              <Footer settings={footerSettings} categories={footerCategories} />
               <BackToTop />
               <Toaster />
             </div>
